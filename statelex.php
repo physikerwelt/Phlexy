@@ -263,7 +263,9 @@ class CheckTex{
 
 	private $texDelimiter = array('backslash', 'downarrow', 'Downarrow', 'langle', 'lbrace', 'lceil', 'lfloor', 'llcorner', 'lrcorner', 'rangle', 'rbrace', 'rceil', 'rfloor', 'rightleftharpoons', 'twoheadleftarrow', 'twoheadrightarrow', 'ulcorner', 'uparrow', 'Uparrow', 'updownarrow', 'Updownarrow', 'urcorner', 'Vert', 'vert', 'lbrack', 'rbrack');
 
-	private $texFunAr1 = array('acute', 'bar', 'bcancel', 'bmod', 'boldsymbol', 'breve', 'cancel', 'check', 'ddot', 'dot', 'emph', 'grave', 'hat', 'mathbb', 'mathbf', 'mathbin', 'mathcal', 'mathclose', 'mathfrak', 'mathit', 'mathop', 'mathopen', 'mathord', 'mathpunct', 'mathrel', 'mathrm', 'mathsf', 'mathtt', /*'operatorname',*/ 'pmod', 'sqrt', 'textbf', 'textit', 'textrm', 'textsf', 'texttt', 'tilde', 'vec', 'xcancel', 'xleftarrow', 'xrightarrow', 'begin' ,'end');
+	private $texFunAr1 = array('acute', 'bar', 'bcancel', 'bmod', 'boldsymbol', 'breve', 'cancel', 'check', 'ddot', 'dot', 'emph', 'grave', 'hat', 'mathbb', 'mathbf', 'mathbin', 'mathcal', 'mathclose', 'mathfrak', 'mathit', 'mathop', 'mathopen', 'mathord', 'mathpunct', 'mathrel', 'mathrm', 'mathsf', 'mathtt', /*'operatorname',*/ 'pmod', 'sqrt', 'textbf', 'textit', 'textrm', 'textsf', 'texttt', 'tilde', 'vec', 'xcancel', 'xleftarrow', 'xrightarrow', 'begin' ,'end',
+		//customizations
+		);
 
 	private $texFunAr2 = array('binom', 'cancelto', 'cfrac', 'dbinom', 'dfrac', 'frac', 'overset', 'stackrel', 'tbinom', 'tfrac', 'underset');
 
@@ -278,81 +280,157 @@ class CheckTex{
 	private $mwLiterals = array('alef' => 'aleph', 'alefsym' => 'aleph', 'Alpha' => 'mathrm{A}', 'and' => 'land', 'ang' => 'angle', 'Beta' => 'mathrm{B}', 'bull' => 'bullet', 'Chi' => 'mathrm{X}', 'clubs' => 'clubsuit', 'cnums' => 'mathbb{C}', 'Complex' => 'mathbb{C}', 'Dagger' => 'ddagger', 'diamonds' => 'diamondsuit', 'Doteq' => 'doteqdot', 'doublecap' => 'Cap', 'doublecup' => 'Cup', 'empty' => 'emptyset', 'Epsilon' => 'mathrm{E}', 'Eta' => 'mathrm{H}', 'exist' => 'exists', 'ge' => 'geq', 'gggtr' => 'ggg', 'hAar' => 'Leftrightarrow', 'harr' => 'leftrightarrow', 'Harr' => 'Leftrightarrow', 'hearts' => 'heartsuit', 'image' => 'Im', 'infin' => 'infty', 'Iota' => 'mathrm{I}', 'isin' => 'in', 'Kappa' => 'mathrm{K}', 'larr' => 'leftarrow', 'Larr' => 'Leftarrow', 'lArr' => 'Leftarrow', 'le' => 'leq', 'lrarr' => 'leftrightarrow', 'Lrarr' => 'Leftrightarrow', 'lrArr' => 'Leftrightarrow', 'Mu' => 'mathrm{M}', 'natnums' => 'mathbb{N}', 'ne' => 'neq', 'Nu' => 'mathrm{N}', 'O' => 'emptyset', 'omicron' => 'mathrm{o}', 'Omicron' => 'mathrm{O}', 'or' => 'lor', 'part' => 'partial', 'plusmn' => 'pm', 'rarr' => 'rightarrow', 'Rarr' => 'Rightarrow', 'rArr' => 'Rightarrow', 'real' => 'Re', 'reals' => 'mathbb{R}', 'Reals' => 'mathbb{R}', 'restriction' => 'upharpoonright', 'Rho' => 'mathrm{P}', 'sdot' => 'cdot', 'sect' => 'S', 'spades' => 'spadesuit', 'sub' => 'subset', 'sube' => 'subseteq', 'supe' => 'supseteq', 'Tau' => 'mathrm{T}', 'thetasym' => 'vartheta', 'varcoppa' => 'mbox{coppa}', 'weierp' => 'wp', 'Zeta' => 'mathrm{Z}', 'C' => 'mathbb{C}', 'H' => 'mathbb{H}', 'N' => 'mathbb{N}', 'Q' => 'mathbb{Q}', 'R' => 'mathbb{R}', 'Z' => 'mathbb{Z}');
 
 	private $texFunc = array('arccos', 'arcsin', 'arctan', 'arg', 'cos', 'cosh', 'cot', 'coth', 'csc', 'deg', 'det', 'dim', 'exp', 'gcd', 'hom', 'inf', 'ker', 'lg', 'lim', 'liminf', 'limsup', 'ln', 'log', 'max', 'min', 'Pr', 'sec', 'sin', 'sinh', 'sup', 'tan', 'tanh', 'operatorname');
-	private $texDecl = array('rm', 'it', 'cal');
+	private $texDecl = array(/*'rm',*/ 'it', 'cal');
 	private $texOthers = array('left','right','sideset');
 
+	/**@var String the output**/
 	private $outstr='';
+	/**@var array the current braket state **/
 	private $Brakets = array();
-	private $argDepth = 0;
+	/**@var array the current structure of expected arguments **/
 	private $expectArg = array();
+	/**@var int the depth of $expectedArg **/
+	private $argDepth = 0;
+	/** @var String buffet to be attached to the output **/
 	private $outbuf = '';
+	/** @var Boolean stores if last token was ^_ to avoid constructs like $a__1$ **/
 	private $wasSubSup = false;
+	/** @var boolean determines if the next token is an agument **/
 	private $nextTokenIsArg = false;
+	/** @var boolean is in text mode */
 	private $waitForEndOfTextMode = false;
-	private $doubleRmClose = false;
 
+	private $extraBrakets = array();
+	private $inArg =0;
+	private $outgroups = array();
+	private $afterHatGroup = 0;
+	private $hatGroupLevel = 0;
+	private $hatGroupContent = '';
+	private $subGroupLevel = 0;
+
+	private function getValue(&$level, &$array){
+		if ( array_key_exists( $level, $array)){
+			return $array[$level];
+		} else {
+			$this->debug("WARN: No args defined at level".$level);
+			return 0;
+		}
+	}
+	private function getArg(){
+		return $this->getValue( $this->argDepth, $this->expectArg);
+	}
+
+	private function getExtraBrakets(){
+		return $this->getValue( $this->argDepth, $this->extraBrakets);
+	}
+
+	private function getBrakets(){
+		return $this->getValue( $this->argDepth, $this->Brakets);
+	}
+	private function addCommandInBrakets($command){
+		$this->outbuf= substr($this->outbuf,0,-1);
+		$this->addOpenBraket(true);
+		$this->outbuf.="\\".$command;
+	}
+	private function debug($msg){
+		global $debug;
+		if ($debug){
+			echo "  ".$msg."\n";
+		}
+	}
+	/**
+	 *
+	 * @param int $numArgs the number of required arguments
+	 */
 	private function addArg($numArgs){
 		$this->argDepth++;
 		$this->expectArg[$this->argDepth] = $numArgs;
 		$this->nextTokenIsArg = true;
+		$this->debug("Adding ".$this->getArg()." argument(s) at level $this->argDepth");
 	}
+	/**
+	 * This function is called after an argument was processed
+	 *
+	 */
 	private function appendBrakets(){
-		global $debug;
-		if( $this->argDepth && $this->expectArg[$this->argDepth] ==0 ){
-			$this->addClosingBraket();
-			$this->argDepth--;
-			$this->nextTokenIsArg = false;
-			if ($debug) $this->outbuf.="+";
-			$this->appendBrakets();
+		if ( array_key_exists( $this->argDepth, $this->extraBrakets)){
+			if ($this->extraBrakets[ $this->argDepth ] >0 && $this->expectArg[$this->argDepth]==1 ){
+				$this->debug("add extra }");
+				$this->addClosingBraket();
+				$this->extraBrakets[ $this->argDepth ]--;
+				$this->appendBrakets();
+			}
+		}
+	}
+	private function singleTokenArg(){
+		if($this->nextTokenIsArg){
+			$this->enterArg();
+			$this->leaveArg();
 		}
 	}
 
-	private function wasArg(){
-		$this->expectArg[$this->argDepth]--;
-		if( $this->expectArg[$this->argDepth] > 0){
-			$this->nextTokenIsArg = true;
-		} else {
+	private function enterArg(){
+		if($this->nextTokenIsArg){
+			$this->inArg++;
 			$this->nextTokenIsArg = false;
+			$this->debug("entering argument ".$this->getArg()."(".$this->argDepth .")");
 		}
 	}
-	private function addOpenBraket(){
-		$this->outbuf.="{";
-		if($this->nextTokenIsArg){
-			$this->nextTokenIsArg = false;
-			$this->Brakets[$this->argDepth]=1;
-		}else { //if ( $this->argDepth ){
-			if( array_key_exists($this->argDepth, $this->Brakets) ){
-				$this->Brakets[$this->argDepth]++;
+	/**
+	}
+	 * function is called after an argument was finished
+	 */
+	private function leaveArg() {
+		//check if an Argument was expected
+		if($this->inArg && $this->getBrakets() == $this->getExtraBrakets()){
+			$this->debug("leaving argument ".$this->getArg()."(".$this->argDepth .")");
+			$this->appendBrakets();
+			$this->expectArg[ $this->argDepth ]--;
+			$this->inArg--;
+			if ( $this->getArg() > 0 ) {
+				$this->nextTokenIsArg = true;
 			} else {
-				$this->Brakets[$this->argDepth] =1;
+				$this->nextTokenIsArg = false;
+				if($this->argDepth == $this->hatGroupLevel){
+					$this->afterHatGroup=2;
+					$this->debug("after head grpup");
+					$this->hatGroupLevel =0;
+				} elseif ($this->argDepth == $this->subGroupLevel){
+					$this->debug("after sub group");
+					$this->outgroups[].=$this->outbuf;
+					$this->outbuf='';
+					$this->outgroups[].=$this->hatGroupContent;
+					$this->hatGroupContent = '';
+					$this->subGroupLevel = 0;
+				}
+				$this->argDepth--;
+				$this->leaveArg();
 			}
 		}
+	}
+	private function addOpenBraket($extra = false){
+		$this->outbuf.="{";
+		if( array_key_exists($this->argDepth, $this->Brakets) ){
+			$this->Brakets[$this->argDepth]++;
+		} else {
+			$this->Brakets[$this->argDepth] = 1;
+		}
+		if ( $extra ){
+			if( array_key_exists($this->argDepth, $this->extraBrakets) ){
+				$this->extraBrakets[ $this->argDepth ]++;
+			} else {
+				$this->extraBrakets[ $this->argDepth ] = 1;
+			}
+		}
+		$this->debug("adding ".($extra?"extra":"normal")."{. Now ".$this->Brakets[$this->argDepth]." { open at level ". $this->argDepth);
 	}
 
 	private function addClosingBraket(){
-		global $debug;
 		$this->outbuf.="}";
-		if( $this->argDepth ){
-			if( array_key_exists($this->argDepth, $this->Brakets) ){
-				$this->Brakets[$this->argDepth]--;
-				if ( $this->Brakets[$this->argDepth] == 0 ){
-					$this->wasArg();
-					// if( $this->doubleRmClose ){
-					// 	$this->doubleRmClose = false;
-					// 	$this->appendBrakets();
-					// 	if ($this->argDepth ) {
-					// 		$this->wasArg();
-					// 	}
-					// 	$this->outbuf.='}';
-					// }
-				}
-			} else {
-				//Arguments without brakets
-				if ($debug){$this->outbuf.='µ';
-				$this->outbuf.=$this->argDepth;}
-				$this->wasArg();
-				//$this->outbuf.='}';
-			}
+		if( array_key_exists($this->argDepth, $this->Brakets) ){
+			$this->Brakets[$this->argDepth]--;
+		} else {
+			$this->debug("missing key!!");
 		}
 	}
 
@@ -361,13 +439,11 @@ function checktex($tex = ''){
 	try{
 		$tokens = $lexer->lex($tex);
 	} catch (Exception $e) {
-		if ( $debug )
-			echo($e->getMessage());
+		$this->debug($e->getMessage());
 		return "S";
 	}
 	if( $lexer->hasPushedStates() ){
-		if ( $debug )
-			echo "still hasPushedStates\n";
+		$this->debug("still hasPushedStates");
 		return "S";
 	}
 	if( $lexer->getStateStack() !== array('MATHMODE')){
@@ -378,61 +454,62 @@ function checktex($tex = ''){
 		return "E";
 	}
 
-
+	$wasHat=false;
 	foreach ($tokens as $value) {
 		$type = $value[0];
 		$content = $value[2];
-		$this->outbuf = $content;
+		//$this->outbuf = $content;
 		if($this->waitForEndOfTextMode){
 			if ($type != 'TEXT') {
 				$this->waitForEndOfTextMode = false;
-				//TODO add closing braket?
-				$this->outbuf ="}".$this->outbuf;
+				$this->outbuf .="}";
+				$this->leaveArg();
 			}
 		}
-		//var_export($this->outbuf);
+		if ($debug){
+			echo "processing token '$content' of type '$type'";
+			if($this->nextTokenIsArg){
+				echo " expecting argument ";
+			}
+			echo var_export($this->afterHatGroup,true);
+			echo "\n";
+		}
 		switch ($type):
 			case 'COMMANDNAME':
-				if ( $this->nextTokenIsArg ){
-					$this->wasArg();
-				}
+				$this->enterArg();
 				if (in_array($content, $this->texFunAr1) ){
-					$this->outstr= substr($this->outstr,0,-1);
-					$this->outbuf= '';
-					$this->addOpenBraket();
-					$this->outbuf.="\\".$content;
 					$this->addArg(1);
+					$this->addCommandInBrakets($content);
 				} elseif ( in_array($content, $this->texFunAr2)) {
-					$this->outstr= substr($this->outstr,0,-1)."{\\";
 					$this->addArg(2);
+					$this->addCommandInBrakets($content);
 				} elseif ( in_array($content, $this->texBig)) {
-					$this->outstr= substr($this->outstr,0,-1)."{\\";
 					$this->addArg(1);
+					$this->addCommandInBrakets($content);
 				} elseif ( in_array($content, $this->texDecl)) {
-					$this->outstr= substr($this->outstr,0,-1)."{\\";
-					$this->outbuf = $this->outbuf.'{';
 					$this->addArg(1);
-					$this->nextTokenIsArg = false;
-					$this->Brakets[$this->argDepth]=1;
-					$this->doubleRmClose = true;
-				} elseif (array_key_exists($content, $this->mwLiterals)){
-					$this->outbuf = $this->mwLiterals[$this->outbuf];
-				} elseif ( in_array( $content, $this->texBoxChar)){
-					$this->outbuf = 'mbox{\\' . $this->outbuf . '}';
-				} elseif (array_key_exists($content, $this->mwDelimiter)){
-					$this->outbuf = $this->mwDelimiter[$this->outbuf];
+					$this->addCommandInBrakets($content);
+					//$this->nextTokenIsArg = false;
+					//$this->Brakets[$this->argDepth]=1;
 				} elseif (array_key_exists($content, $this->mwFunAr1)){
-					$this->outstr= substr($this->outstr,0,-1);
-					$this->outbuf= '';
-					$this->addOpenBraket();
-					$this->outbuf.="\\".$content;
 					$this->addArg(1);
-					$this->outbuf = $this->mwFunAr1[$this->outbuf];
-				} elseif ( in_array( $content, $this->texLiterals)){
-				} elseif ( in_array( $content, $this->texFunc)){
-				} elseif ( in_array( $content, $this->texDelimiter)){
-				} elseif ( in_array( $content, $this->texFunInfix)){
-				} elseif ( in_array( $content, $this->texOthers)){
+					$this->addCommandInBrakets($this->mwFunAr1[$content]);
+				} elseif (array_key_exists($content, $this->mwLiterals)){
+					$this->outbuf .= $this->mwLiterals[$content];
+					$this->leaveArg();
+				} elseif ( in_array( $content, $this->texBoxChar)){
+					$this->outbuf .= 'mbox{\\' . $content . '}';
+					$this->leaveArg();
+				} elseif (array_key_exists($content, $this->mwDelimiter)){
+					$this->outbuf .= $this->mwDelimiter[$content];
+					$this->leaveArg();
+				} elseif ( in_array( $content, $this->texLiterals)
+					|| in_array( $content, $this->texFunc)
+					|| in_array( $content, $this->texDelimiter)
+					|| in_array( $content, $this->texFunInfix)
+					|| in_array( $content, $this->texOthers)){
+					$this->outbuf.=$content;
+					$this->leaveArg();
 				} else { if( $debug ){
 						echo "invalid COMMANDNAME '$content'\n";
 					}
@@ -446,55 +523,73 @@ function checktex($tex = ''){
 					}
 					return 'S';
 				}
-				$this->addOpenBraket();
+				//handle ugly a^b_c->a_c^b rewriting
+				if($content == "^" ){
+					$this->outgroups[]= $this->outbuf;
+					$this->outbuf = '';
+					$this->hatGroupLevel = $this->argDepth+1;
+					$wasHat=true;
+					$this->debug("found head group");
+				}
+				if($content == "_" && $this->afterHatGroup>0){
+					$this->debug('found _ in wrong order');
+					$this->hatGroupContent = $this->outbuf;
+					$this->outbuf = '';
+					$this->subGroupLevel = $this->argDepth+1;
+				}
+				$this->outbuf .= $content;
 				$this->addArg(1);
+				$this->addOpenBraket(true);
 				$this->wasSubSup=true;
 				break;
 			case '}':
-				$this->outbuf='';
 				$this->addClosingBraket();
+				$this->leaveArg();
 				break;
 			case '{':
-				$this->outbuf='';
+				$this->enterArg();
 				$this->addOpenBraket();
 				break;
 			case 'TEXTCOMMANDNAME':
-				$this->outstr= substr($this->outstr,0,-1)."{\\";
+				$this->outbuf= substr($this->outbuf,0,-1)."{\\";
+				$this->outbuf.= $content;
 				$this->waitForEndOfTextMode = true;
+				$this->enterArg();
 				break;
 			case 'MWESCAPE':
-				$this->outbuf = '\\'.$content;
+				$this->outbuf .= '\\'.$content;
+				$this->singleTokenArg();
 				break;
 			case 'WHITESPACE':
 			case '\\':
 			case 'TEXT':
+				$this->outbuf .= $content;
 				break;
 			default:
-				if( $this->nextTokenIsArg ){
-					$this->wasArg();
-				}
+				$this->outbuf .= $content;
+				$this->singleTokenArg();
 				if (substr($type,0,3) == 'err') {
 					if ( $debug ) echo 'error';
 					return "S";
 				}
 		endswitch;
-		$this->appendBrakets();
-		//var_dump( $this->content,$this->expectArg);
-		if ($type != '_^' && $type != 'WHITESPACE'){
-			$this->wasSubSup = false;
+		if ($type != 'WHITESPACE'){
+			if ($type != '_^' ){
+				$this->wasSubSup = false;
+			}
+			$this->afterHatGroup--;
 		}
-		$this->outstr.= $this->outbuf;
-			$this->outbuf='';
+		//$this->outstr.= $this->outbuf;
+		$this->debug("setting output to ".$this->outbuf);
 	}
+	$this->outstr = implode( '', $this->outgroups ) . $this->outbuf;
 	if( $this->argDepth ){
-		$this->outstr.='}';
+		$this->outstr .= '}';
 		if($debug){
-			$this->outstr.='--';
-		}
-		if ($this->doubleRmClose){
-			$this->outstr.='}';
+			$this->outstr .= '--';
 		}
 	}
+	//var_dump($this->extraBrakets);
 	return '+'.$this->outstr;
 }
 }
@@ -502,6 +597,6 @@ $factory = new UsingCompiledRegexFactory(new LexerDataGenerator);
 // 'a+b\\sin(x^2)asdfasdf  \\cosh k \\Pr x \\% =5'
 $lexer = $factory->createLexer($lexerDefinition,'i','MATHMODE');
 $checker = new CheckTex();
-$debug = true;
+#$debug = true;
 $s= $checker->checktex($argv[1]);
 echo $s;
